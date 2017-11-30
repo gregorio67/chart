@@ -15,6 +15,7 @@ import com.sun.istack.internal.NotNull;
 
 import dymn.chart.vo.UserVo;
 
+
 public class MemberService implements UserDetailsService{
 
 	@Resource(name="userService")

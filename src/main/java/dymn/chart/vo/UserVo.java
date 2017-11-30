@@ -1,5 +1,6 @@
 package dymn.chart.vo;
 
+
 public class UserVo {
 
 	private String username;

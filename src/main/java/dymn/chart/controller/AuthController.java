@@ -16,6 +16,7 @@ public class AuthController {
 	public ModelAndView login(@RequestParam(value="error", required=false) String error,
 							  @RequestParam(value="logout", required=false) String logout) throws Exception {
 	
+		
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("error :: {}, logout :: {}", error, logout);
 		}
