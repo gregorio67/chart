@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import dymn.utils.ApplicationContextProvider;
+
 
 /**
  * When you want to test restful server, the postman tool is the best for me.
@@ -40,6 +42,16 @@ public class UserRestController {
 			String key = itr.next();
 			resultMap.put(key, restServer.get(key));
 		}
-		return resultMap;
+		
+		/** Get bean from application context. restserver is defined in context-util.xml **/
+		@SuppressWarnings("unchecked")
+		Map<String, String> serverMap = (Map<String, String>) ApplicationContextProvider.getApplicationContext().getBean("restserver");
+		Iterator<String> itr1 = serverMap.keySet().iterator();
+		while(itr.hasNext()) {
+			String key = itr1.next();
+			resultMap.put(key, serverMap.get(key));
+		}
+		
+		return resultMap; 
 	}
 }

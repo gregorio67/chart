@@ -23,5 +23,7 @@
 	<beans:bean id="system" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<beans:property name="location" value="classpath:properties/system.properties" />
 	</beans:bean>
+	
+	<beans:bean id="applicationContext" class="dymn.utils.ApplicationContextProvider" />
 
 </beans:beans>
