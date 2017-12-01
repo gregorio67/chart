@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,8 +33,8 @@ public class UserRestController {
 	@Resource(name="restserver")
 	private Map<String, String> restServer; 
 	
-	@RequestMapping(value="/getConsumer", method={RequestMethod.GET, RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> getConsumer(@RequestBody Map<String, Object> param) throws Exception {
+	@RequestMapping(value="/getConsumer/{id}/{password}", method={RequestMethod.GET, RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> getConsumer(@RequestBody Map<String, Object> param, @PathVariable String id, @PathVariable String password) throws Exception {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		

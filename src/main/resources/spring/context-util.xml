@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
 	<util:map id="restserver">
-		<beans:entry key="aaa" value="http://localhost:5050" />
-		<beans:entry key="bbb" value="http://localhost:8080" />
+		<beans:entry key="kyoboapi" value="https:openapi.kyobo.co.kr:1443" />
+		<beans:entry key="getConsumer" value="POST|/v1.0/COM/user/consumer" />
 	</util:map>
 </beans:beans>
