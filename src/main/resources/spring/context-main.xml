@@ -13,5 +13,9 @@
 	</context:component-scan>
 	
 	<!-- Spring Security -->
-	<beans:import resource="classpath:spring/context-security.xml"/>
+	<!-- beans:import resource="classpath:spring/context-security.xml"/-->
+	
+	<beans:import resource="classpath:spring/context-properties.xml" />
+	
+	<beans:import resource="classpath:spring/context-util.xml" />
 </beans:beans>

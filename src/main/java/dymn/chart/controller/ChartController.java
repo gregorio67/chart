@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
@@ -20,8 +21,17 @@ import org.springframework.web.servlet.ModelAndView;
 public class ChartController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
+	
+	
 	@Resource(name="messageSource")
 	private MessageSource messageSource;
+	
+	@Resource(name="app")
+	private Properties app;
+	
+	
+	@Resource(name="system")
+	private Properties system;
 	
 //	@Resource(name="jsonView")
 //	private MappingJackson2JsonView jsonView;
@@ -33,6 +43,8 @@ public class ChartController {
 		Locale.setDefault(new Locale("en"));
 		String msg = messageSource.getMessage("welcome.springmvc", null, Locale.getDefault());
 		
+		LOGGER.debug(system.getProperty("aa.rest.server.ip"));
+		LOGGER.debug(app.getProperty("aa.default.locale"));
 		LOGGER.debug(msg);
 		return mav;
 	}
