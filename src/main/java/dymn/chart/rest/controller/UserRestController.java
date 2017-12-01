@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
+/**
+ * When you want to test restful server, the postman tool is the best for me.
+ * 
+ * @author KB099
+ *
+ */
 @RestController
 public class UserRestController {
 
