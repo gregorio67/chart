@@ -112,4 +112,9 @@ public class ChartController {
 		
 		return result;
 	}
+	
+	@RequestMapping(value="websocket.do")
+	public String wsView() throws Exception {
+		return "wsclient1";
+	}
 }
