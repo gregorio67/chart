@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.ReloadingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import dymn.utils.CryptotUtil;
 import dymn.utils.PasswordEncoder;
+import dymn.utils.PropertyUtil;
 
 @Controller
 public class AuthController {
@@ -26,6 +29,12 @@ public class AuthController {
 	
 	@Resource(name="crypto")
 	private CryptotUtil crypto;
+	
+//	@Resource(name="propertiesConfiguration")
+//	private PropertiesConfiguration propertiesConfiguration;
+//	
+//	@Resource(name="reloadingStrategy")
+//	private ReloadingStrategy reloadingStrategy;
 	
 	@RequestMapping(value="/login.do")
 	public ModelAndView login(@RequestParam(value="error", required=false) String error,
@@ -73,7 +82,14 @@ public class AuthController {
 		String plainText = crypto.decrypt(encText);
 		
 		resultMap.put("plainText", plainText);
+		
+//		if(reloadingStrategy.reloadingRequired()) {
+//			propertiesConfiguration.refresh();
+//		}
+//		LOGGER.debug("test:: {}", propertiesConfiguration.getProperty("test.reload"));
 
+		LOGGER.debug("test:: {}", PropertyUtil.getString("test.reload"));
+		
 		return resultMap;
 		
 	} 
