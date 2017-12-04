@@ -13,6 +13,7 @@
 	</context:component-scan>
 	
 	<beans:bean id="applicationContext" class="dymn.utils.ApplicationContextProvider" />
+
 	
 	<!-- Spring Security -->
 	<!-- beans:import resource="classpath:spring/context-security.xml"/-->
@@ -20,6 +21,8 @@
 	<beans:import resource="classpath:spring/context-properties.xml" />
 	
 	<beans:import resource="classpath:spring/context-util.xml" />
+	
+	<beans:import resource="classpath:spring/context-crypto.xml" />
 	
 	<!-- beans:import resource="classpath:spring/context-restclient.xml" /-->
 </beans:beans>

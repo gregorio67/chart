@@ -111,14 +111,14 @@ public class RestTemplateConfig {
 	}
 	
 	
-	public <T> T exchange(String url, String method, T param) throws Exception {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		
-		HttpEntity<T> entity = new HttpEntity<T>(param, headers);
-		
-		ResponseEntity<T> response = restTemplate.exchange(url, method, entity, Map.class, param);		
-	}
+//	public <T> T exchange(String url, String method, T param) throws Exception {
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//		
+//		HttpEntity<T> entity = new HttpEntity<T>(param, headers);
+//		
+//		ResponseEntity<T> response = restTemplate.exchange(url, method, entity, T, param);		
+//	}
 	
 	
 	public void setSslProtocols(String[] sslProtocols) {

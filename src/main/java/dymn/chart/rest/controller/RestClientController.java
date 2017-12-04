@@ -16,8 +16,8 @@ public class RestClientController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestClientController.class);
 	
-	@Resource(name = "restTemplate")
-	private RestTemplate restTemplate;
+//	@Resource(name = "restTemplate")
+//	private RestTemplate restTemplate;
 	
 	@RequestMapping(value="restclient.do")
 	public @ResponseBody Map<String, Object> restClient() throws Exception {
