@@ -21,6 +21,7 @@
 
 	<beans:bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<beans:property name="basename" value="messages/message" />
+		<beans:property name="cacheMillis" value="10000" />
 	</beans:bean>
     <!-- beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" /-->
 
@@ -40,4 +41,12 @@
     </beans:bean> 
     
     <!-- beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" /-->
+    
+    <interceptors>
+    	<interceptor>
+    		<mapping path="/**"/>
+    		<exclude-mapping path="/resources/**" />
+    		<beans:bean class="dymn.interceptor.PropertyReloadInterceptor" />
+    	</interceptor>
+    </interceptors>
 </beans:beans>
