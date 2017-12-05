@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -122,4 +123,29 @@ public class ChartController {
 	public String viewAngular() throws Exception {
 		return "angular";
 	}
+	
+	@RequestMapping(value="country.do")
+	public @ResponseBody List<Map<String, Object>>country(@RequestBody Map<String, Object> param) throws Exception {
+//	public @ResponseBody List<Map<String, Object>>country() throws Exception {
+		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		
+		Map<String, Object> map0 = new HashMap<String, Object>();
+		map0.put("Name", "NAME");
+		map0.put("Country", "COUNTRY");
+
+		Map<String, Object> map1 = new HashMap<String, Object>();
+		map1.put("Name", "KKIMDOY");
+		map1.put("Country", "KOREA");
+		
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2.put("Name", "KIMDOY");
+		map2.put("Country", "US");
+		
+		resultList.add(map0);
+		resultList.add(map1);
+		resultList.add(map2);
+		
+		return resultList;
+	}
+
 }
