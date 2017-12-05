@@ -111,7 +111,7 @@ public class RestTemplateConfig {
 	}
 	
 	
-//	public <T> T exchange(String url, String method, T param) throws Exception {
+//	public <K, V> T exchange(String url, String method, T param) throws Exception {
 //		HttpHeaders headers = new HttpHeaders();
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 //		

@@ -10,7 +10,7 @@ import dymn.chart.vo.UserVo;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-	public UserVo getUserById(@NotNull String username) {
+	public UserVo getUserById(String username) {
 		
 		UserVo userVo = new UserVo();
 		userVo.setPassword("kyobo11!");

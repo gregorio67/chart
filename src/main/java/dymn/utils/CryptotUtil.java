@@ -33,19 +33,14 @@ public class CryptotUtil implements InitializingBean{
 	private static SecretKey secretKey = null;
 	private static Cipher cipher = null;
 	
-	@NotNull
 	private String keyAlgorithm;
 	
-	@NotNull
 	private String ciperAlgorithm;
 	
-	@NotNull
 	private String secureAlgorithm;
 	
-	@NotNull
 	private String password ;
 	
-	@NotNull
 	private String salt;
 	
 

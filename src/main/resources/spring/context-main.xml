@@ -14,7 +14,6 @@
 	
 	<beans:bean id="applicationContext" class="dymn.utils.ApplicationContextProvider" />
 
-	
 	<!-- Spring Security -->
 	<!-- beans:import resource="classpath:spring/context-security.xml"/-->
 	

@@ -21,7 +21,7 @@ public class MemberService implements UserDetailsService{
 	@Resource(name="userService")
 	private UserService userService;
 	
-	public UserDetails loadUserByUsername(@NotNull String username) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserVo userVo = userService.getUserById(username);
 		
 		if (userVo == null) {

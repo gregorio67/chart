@@ -12,8 +12,12 @@
 	
 	<websocket:handlers>
 	    <websocket:mapping handler="websocketHandler" path="/websocket/echo.do"/>
-	    <!-- websocket:sockjs/-->
 	</websocket:handlers>
+
+	<websocket:handlers>
+	    <websocket:mapping handler="websocketHandler" path="/echo" />
+	    <websocket:sockjs />
+	</websocket:handlers>	
 	 
 	<beans:bean id="websocketHandler" class="dymn.chart.websocket.WebSocketHandler"/>
 </beans:beans>

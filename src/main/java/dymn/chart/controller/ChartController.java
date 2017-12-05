@@ -115,6 +115,11 @@ public class ChartController {
 	
 	@RequestMapping(value="websocket.do")
 	public String wsView() throws Exception {
-		return "wsclient1";
+		return "wsclient";
+	}
+	
+	@RequestMapping(value="angular.do")
+	public String viewAngular() throws Exception {
+		return "angular";
 	}
 }

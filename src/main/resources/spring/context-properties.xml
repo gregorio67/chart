@@ -24,14 +24,26 @@
 	<beans:bean id="system" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<beans:property name="location" value="classpath:properties/system.properties" />
 	</beans:bean>
+	<!-- Set Properties Utility, When context is loading, all properties are also loaded -->	
+	<beans:bean id="propertiesUtil" class="dymn.utils.ReloadablePropertyPlaceholderConfigurer">
+		<beans:property name="locations">
+			<beans:list>
+				<beans:value>classpath:properties/app.properties</beans:value>
+				<beans:value>classpath:properties/system.properties</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</beans:bean>
 	
-	<!-- beans:bean id="propertiesConfiguration" class="org.apache.commons.configuration.PropertiesConfiguration">
+	<beans:bean id="propertiesConfiguration" class="org.apache.commons.configuration.PropertiesConfiguration">
 		<beans:constructor-arg name="fileName" value="classpath:properties/system.properties" />
 		<beans:property name="reloadingStrategy" ref="reloadingStrategy" />
 	</beans:bean>
 	
 	<beans:bean id="reloadingStrategy" class="org.apache.commons.configuration.reloading.FileChangedReloadingStrategy">
-		<beans:property name="refreshDelay" value="10000" />
-	</beans:bean-->
+		<beans:property name="refreshDelay" value="1000" />
+	</beans:bean>
+	
+	<!-- beans:bean id="reloadPropertyUtil" class="dymn.utils.ReloadPropertyUtil" /-->
 
 </beans:beans>

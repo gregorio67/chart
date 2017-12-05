@@ -24,7 +24,7 @@ public class PropertyUtil extends PropertyPlaceholderConfigurer {
 //            properties.put((String) key, props.getProperty((String) key));
 //        }
 //    }
-	
+
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactory, Properties props) throws BeansException {
 	     super.processProperties(beanFactory, props);
