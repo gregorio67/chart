@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
-                        http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+                        http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
                         
   <display-name>Archetype Created Web Application</display-name>
  
+  <!-- Request that Jetty create an MBean to manage the Bayeux instance -->
+  <context-param>
+      <param-name>org.eclipse.jetty.server.context.ManagedAttributes</param-name>
+      <param-value>org.cometd.bayeux</param-value>
+  </context-param>
+    
   <context-param>
         <param-name>contextConfigLocation</param-name>
         <!-- 스프링의 환경설정 파일인 root-context.xml을 가장 먼저 참조한다-->
@@ -50,7 +56,7 @@
   		<param-name>contextConfigLocation</param-name>
   		<param-value>classpath:spring/context-servlet.xml</param-value>
   	</init-param>
-  	<load-on-startup>1</load-on-startup>
+  	<load-on-startup>2</load-on-startup>
   </servlet>
   
   <servlet>
@@ -60,8 +66,20 @@
   		<param-name>contextConfigLocation</param-name>
   		<param-value>classpath:spring/context-restservlet.xml</param-value>
   	</init-param>
-  	<load-on-startup>2</load-on-startup>
+  	<load-on-startup>3</load-on-startup>
   </servlet>
+
+    <servlet>
+        <servlet-name>cometd</servlet-name>
+        <servlet-class>org.cometd.server.CometDServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>cometd</servlet-name>
+        <url-pattern>/cometd/*</url-pattern>
+    </servlet-mapping>
 
   <servlet-mapping>
   	<servlet-name>chartServlet</servlet-name>
