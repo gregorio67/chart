@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dymn.utils.SftpUtil;
+
 @Controller
 public class ChartController {
 
@@ -33,6 +35,9 @@ public class ChartController {
 	
 	@Resource(name="system")
 	private Properties system;
+	
+	@Resource(name="sftpClient")
+	private SftpUtil sftpClient;
 	
 //	@Resource(name="jsonView")
 //	private MappingJackson2JsonView jsonView;
@@ -146,6 +151,16 @@ public class ChartController {
 		resultList.add(map2);
 		
 		return resultList;
+	}
+	
+	@RequestMapping(value="sftp.do")
+	public @ResponseBody Map<String, Object> getRemoteFile() throws Exception {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		byte[] bytes = sftpClient.getFile("/logs/jeus/DepInst11P/JeusServer.log", "D:/temp/JeusServer.log");
+		resultMap.put("log", new String(bytes));
+		return resultMap;
 	}
 
 }
