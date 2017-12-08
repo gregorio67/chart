@@ -10,23 +10,18 @@
         http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
     
 	
-	<!-- websocket:handlers>
+	<websocket:handlers>
 	    <websocket:mapping handler="websocketHandler" path="/websocket/echo.do"/>
 	</websocket:handlers>
 
 	<websocket:handlers>
 	    <websocket:mapping handler="websocketHandler" path="/echo" />
 	    <websocket:sockjs />
-	</websocket:handlers-->	
+	</websocket:handlers>	
 
 	<!-- Message Broker  -->
 	<!-- when clinet call web socket, the uri is /app/hello that means app is the start context of the web socket -->
-	<websocket:message-broker application-destination-prefix="/app">
-	       <websocket:stomp-endpoint path="/hello">
-	            <websocket:sockjs/>
-	       </websocket:stomp-endpoint>
-	       <websocket:simple-broker prefix="/topic"/>
-	</websocket:message-broker>	 
+
 	 
 	<beans:bean id="websocketHandler" class="dymn.chart.websocket.WebSocketHandler"/>
 </beans:beans>

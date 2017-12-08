@@ -4,7 +4,8 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
-    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/stomp/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/css/stomp/bootstrap.min.responsive.css" rel="stylesheet">
     <link href="/main.css" rel="stylesheet">
     <script src="/resources/js/jquery/jquery-3.2.1.min.js"></script>
     <script src="/resources/js/websocket/sockjs-0.3.4.min.js"></script>

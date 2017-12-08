@@ -1,4 +1,4 @@
-package dymn.chart.controller;
+package dymn.chart.wsock.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class MessageController {
         
         String result = "Hello, " + message.get("name") + "!!!";
         resultMap.put("result", result);
-    	return message;
+    	return resultMap;
    }
     
    @RequestMapping(value="wsstomp.do")
@@ -30,5 +30,16 @@ public class MessageController {
 	   mav.setViewName("wsstomp");
 	   
 	   return mav;
+   }
+   
+   @RequestMapping(value="push.do")
+   @SendTo("/topic/greetings")
+   public @ResponseBody Map<String, Object> pushMessage() throws Exception {
+       Map<String, Object> resultMap = new HashMap<String, Object>();
+       
+       String result = " This message was sent from server !!!";
+       resultMap.put("result", result);
+   	return resultMap;
+	   
    }
 }

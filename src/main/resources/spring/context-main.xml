@@ -13,7 +13,6 @@
 	</context:component-scan>
 	
 	<beans:bean id="applicationContext" class="dymn.utils.ApplicationContextProvider" />
-
 	<!-- Spring Security -->
 	<!-- beans:import resource="classpath:spring/context-security.xml"/-->
 	
@@ -28,5 +27,7 @@
 	<beans:import resource="classpath:spring/context-sftp.xml" />
 
 	<beans:import resource="classpath:spring/context-restclient.xml" />	
+	
+	<beans:import resource="classpath:spring/context-task.xml" />	
 	<!-- beans:import resource="classpath:spring/context-restclient.xml" /-->
 </beans:beans>
