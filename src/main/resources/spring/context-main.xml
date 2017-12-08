@@ -23,7 +23,7 @@
 	
 	<beans:import resource="classpath:spring/context-crypto.xml" />
 	
-	<beans:import resource="classpath:spring/context-websocket.xml" />
+	<!-- beans:import resource="classpath:spring/context-websocket.xml" /-->
 	
 	<beans:import resource="classpath:spring/context-sftp.xml" />
 
