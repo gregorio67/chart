@@ -3,62 +3,33 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
-    
-	<beans:bean id="requestConfigBuilder" class="org.apache.http.client.config.RequestConfig" factory-method="custom">
-		<beans:property name="connectionRequestTimeout" value="2000" />
-		<beans:property name="connectTimeout" value="2000"/>
-		<beans:property name="socketTimeout" value="2000" />
+    <beans:bean id="restTemplate" class="dymn.utils.RestTemplateBean" init-method="init">
+		<beans:property name="ignoreCertValidate" value="false"/>
+		<beans:property name="sslProtocols" value="TLSv1.1, TLSv1.2" />
+		<beans:property name="connectionRequestTimeout" value="3000" />
+		<beans:property name="connectTimeout" value="3000" />
+		<beans:property name="readTimeout" value="3000" />
+		<beans:property name="maxPool" value="100" />
+		<beans:property name="keyStoreLoc" value="D:/ssl/keystore" />
+		<beans:property name="trustStoreLoc" value="D:/ssl/truststore" />
+		<beans:property name="password" value="kyobo11!" />
 	</beans:bean>
 	
-	<beans:bean id="requestConfig" factory-bean="requestConfigBuilder" factory-method="build" />
+	<util:map id="openapi">
+		<beans:entry key="host" value="https://openapi.kyobo.co.kr:1443" />
+		<beans:entry key="API_HUSERMAP" value="/v1.0/INFO/user/husermapinfo|POST" />
+		<beans:entry key="API_PE601UM" value="/v1.0/PAY/loan/amount|POST" />
+	</util:map>
 	
-	<beans:bean id="connectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
-        <beans:property name="maxTotal" value="30" />
-        <beans:property name="defaultMaxPerRoute" value="50" />
-    </beans:bean>
-    
-    <!-- Non static factory method -->
-    <beans:bean id="customSslSocketFactory" class="dymn.utils.CustomSslSocketFactory">
-        <beans:property name="ignoreCertValidation" value="true" />
-    	<beans:property name="sslProtocols" value="TLSv1.1,TLSV1.2" />
-    	<beans:property name="trustStore" value="${ssl.truststore.file}" />
-    	<beans:property name="keyStore" value="${ssl.keystore.file}" />
-    </beans:bean>
-  
-    <beans:bean id="sslSocketFactory" class="dymn.utils.CustomSslSocketFactory" factory-method="create" factory-bean="customSslSocketFactory" />
-
-    
-    <!--Http client-->
-    <beans:bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">
-    	<beans:property name="maxConnTotal" value="20" />
-        <beans:property name="defaultRequestConfig" ref="requestConfig" />
-        <beans:property name="connectionManager" ref="connectionManager"/>
-        <beans:property name="sSLSocketFactory" ref="sslSocketFactory" />
-    </beans:bean>
-    
-    <beans:bean id="httpClient" factory-bean="httpClientBuilder" factory-method="build" />
- 	
-       
-    <!--Http client-->
-	<beans:bean id="httpClientFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
-	    <beans:property name="httpClient" ref="httpClient"/>
-	    <!-- beans:property name="requestConfig" ref="requestConfig" /-->
-	</beans:bean>
-		
- 	<beans:bean id="requestFactory" factory-bean="httpClientFactory">
-        <beans:property name="defaultHttpClient" ref="httpClient"/>
-    </beans:bean>
-
-    <beans:bean id="bufferingRequestFactory" class="org.springframework.http.client.BufferingClientHttpRequestFactory">
-	    <beans:constructor-arg ref="requestFactory" />
-	</beans:bean>	
+	<util:map id="local">
+		<beans:entry key="host" value="http://localhost:8080" />
+		<beans:entry key="getConsumer" value="/rest/getConsumer/2/3|POST" />
+	</util:map>
 	
-	<beans:bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-		<beans:property name="messageConverters" ref="jsonMessageConverter" />
-		<beans:constructor-arg ref="bufferingRequestFactory"/>
-	</beans:bean>
 </beans:beans>

@@ -26,6 +26,7 @@
 	<beans:import resource="classpath:spring/context-websocket.xml" />
 	
 	<beans:import resource="classpath:spring/context-sftp.xml" />
-	
+
+	<beans:import resource="classpath:spring/context-restclient.xml" />	
 	<!-- beans:import resource="classpath:spring/context-restclient.xml" /-->
 </beans:beans>

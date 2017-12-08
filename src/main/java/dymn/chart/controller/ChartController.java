@@ -11,13 +11,18 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.asm.TypeReference;
 import org.springframework.context.MessageSource;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dymn.utils.RestTemplateBean;
 import dymn.utils.SftpUtil;
 
 @Controller
@@ -38,6 +43,9 @@ public class ChartController {
 	
 	@Resource(name="sftpClient")
 	private SftpUtil sftpClient;
+	
+	@Resource(name="restTemplate")
+	private RestTemplateBean restTemplate;
 	
 //	@Resource(name="jsonView")
 //	private MappingJackson2JsonView jsonView;
@@ -161,6 +169,27 @@ public class ChartController {
 		byte[] bytes = sftpClient.getFile("/logs/jeus/DepInst11P/JeusServer.log", "D:/temp/JeusServer.log");
 		resultMap.put("log", new String(bytes));
 		return resultMap;
+	}
+	
+	
+	@RequestMapping(value="openapi.do")
+	public @ResponseBody Map<String, Object> execOpenApi() throws Exception {
+		
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("kyoboApiKey", "EQatXzRTYzDHlGE876GvLy7trHPkiajx");
+		Map<String, Object> requestBody = new HashMap<String, Object>();
+		Map<String, Object> parameter = new HashMap<String, Object>();
+		parameter.put("PRTY_REG_NO", "6111042615137");
+		requestBody.put("dataBody", parameter);
+		
+		Map<String, Object> result0 = restTemplate.exchange("openapi", "API_HUSERMAP", headers, null, null, requestBody);
+			
+		Map<String, Object> result1 = restTemplate.exchange("local", "getConsumer", headers, null, null, requestBody);
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("result0", result0);
+		result.put("result1", result1);
+		return result;
 	}
 
 }
