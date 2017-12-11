@@ -4,10 +4,12 @@
     xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:websocket="http://www.springframework.org/schema/websocket"
+    xmlns:task="http://www.springframework.org/schema/task"
     xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
     
 
 	<annotation-driven />
@@ -50,8 +52,19 @@
 	       <websocket:stomp-endpoint path="/hello" allowed-origins="*">
 	            <websocket:sockjs/>
 	       </websocket:stomp-endpoint>
-	       <websocket:simple-broker prefix="/topic"/>
+	       <websocket:simple-broker prefix="/topic,/queue"/>
+	       <websocket:broker-channel>
+            	<websocket:executor  core-pool-size="4" max-pool-size="10" />
+           </websocket:broker-channel>
 	</websocket:message-broker>	
    
-    <!-- beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" /-->
+    <task:scheduler id="taskScheduler" pool-size="10"/>
+   <task:annotation-driven scheduler="taskScheduler"/>     
+   <beans:bean id="messagingScheduler" class="dymn.utils.MessagingScheduler"/>
+
+   <task:scheduled-tasks scheduler="taskScheduler">
+     	<task:scheduled ref="messagingScheduler" method="checkNotice" fixed-rate="2000"/>
+   </task:scheduled-tasks>
+   
+
 </beans:beans>

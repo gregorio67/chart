@@ -19,7 +19,7 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/greetings', function (greeting) {
-        	debugger;
+//        	debugger;
             showGreeting(JSON.parse(greeting.body));
         });
     });
@@ -38,8 +38,8 @@ function sendName() {
 }
 
 function showGreeting(message) {
-	debugger;
-	alert(message.result);
+//	debugger;
+//	alert(message.result);
     $("#greetings").append("<tr><td>" + message.result + "</td></tr>");
 }
 
