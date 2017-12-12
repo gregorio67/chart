@@ -24,4 +24,5 @@
 
 	 
 	<beans:bean id="websocketHandler" class="dymn.chart.websocket.WebSocketHandler"/>
+			
 </beans:beans>

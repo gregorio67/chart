@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dymn.utils.CacheUtil;
 import dymn.utils.CryptotUtil;
 import dymn.utils.PasswordEncoder;
+import dymn.utils.RandomUtil;
 import dymn.utils.ReloadPropertyUtil;
 import dymn.utils.ReloadablePropertyPlaceholderConfigurer;
 
@@ -33,6 +35,9 @@ public class AuthController {
 	
 	@Resource(name="propertiesConfiguration")
 	private PropertiesConfiguration propertiesConfiguration;
+	
+	@Resource(name="cacheUtil")
+	private CacheUtil cacheUtil;
 
 //	@Resource(name="propertiesUtil")
 //	private ReloadablePropertyPlaceholderConfigurer propertiesUtil;
@@ -101,4 +106,30 @@ public class AuthController {
 		return resultMap;
 		
 	} 
+	
+	@RequestMapping(value="getAuthCode.do")
+	public @ResponseBody Map<String, Object> getAuthCode() throws Exception {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("clientId", "kkimdoy");
+		resultMap.put("authTime", System.currentTimeMillis());
+		resultMap.put("authcode", RandomUtil.getUUID());
+		
+		cacheUtil.putData("kkimdoy", resultMap);
+		return resultMap;
+		
+	}
+	
+	@RequestMapping(value="checkAuthCode.do")
+	public @ResponseBody Map<String, Object> checkAuthCode() throws Exception {
+		long refreshTime = 60000;
+		Map<String, Object> resultMap = cacheUtil.getData("kkimdoy", Map.class);
+		long authTime = Long.parseLong(String.valueOf(resultMap.get("authTime")));
+		if ((authTime + refreshTime) < System.currentTimeMillis()) {
+			resultMap.put("code", "Your auth code was expired");
+		}
+		return resultMap;
+		
+	}
+	
 }

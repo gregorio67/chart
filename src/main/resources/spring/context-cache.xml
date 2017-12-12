@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+	
+	<beans:bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" destroy-method="destroy">
+		<beans:property name="configLocation" value="classpath:cache/ehcache.xml" />
+	</beans:bean>
+	
+	<beans:bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<beans:property name="cacheManager" ref="ehcacheManager" />
+	</beans:bean>
+	
+	<beans:bean id="cacheUtil" class="dymn.utils.CacheUtil" init-method="init">
+		<beans:property name="cacheManager" ref="ehcache" />
+		<beans:property name="cacheName" value="restService" />
+	</beans:bean>
+</beans:beans>
