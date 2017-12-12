@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="apiUser">
+	<select id="selApiUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			CLIENTID,
+			AUTHCODE,
+			AUTHTIME
+		FROM APIUSER
+		WHERE CLIENTID = #{clientId}
+	</select>
+	
+	<insert id="insApiUser" parameterType="java.util.HashMap">
+		INSERT INTO	APIUSER(
+			CLIENTID,
+			AUTHCODE,
+			AUTHTIME
+		)
+		VALUES (
+			#{clientId},
+			#{authCode},
+			#{authTime}
+		)
+	</insert>
+	
+	<update id="updApiUser" parameterType="java.util.HashMap">
+		UPDATE APIUSER
+		SET 	AUTHCODE = #{authCode},
+				AUTHTIME = #{authTime}
+		WHERE	CLIENTID = #{clientId} 	
+	</update>
+</mapper>
