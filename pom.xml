@@ -232,6 +232,17 @@
 	    <artifactId>sqlite-jdbc</artifactId>
 	    <version>3.20.0</version>
 	</dependency>
+	<!-- Generate WADL -->	
+	<!-- dependency>
+	  <groupId>org.jvnet.ws.wadl</groupId>
+	  <artifactId>wadl-core</artifactId>
+	  <version>1.1.6</version>
+	</dependency> 
+	<dependency>
+	    <groupId>org.jvnet.ws.wadl</groupId>
+	    <artifactId>wadl-client-plugin</artifactId>
+	    <version>1.1.6</version>
+	</dependency-->	
     
     <dependency>
       <groupId>junit</groupId>

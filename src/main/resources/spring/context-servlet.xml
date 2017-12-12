@@ -41,7 +41,15 @@
     </beans:bean> 
     
     <!-- beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" /-->
+	<beans:bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+	    <beans:property name="interceptors">
+	    	<beans:list>
+	    		<beans:ref bean="officeHoursInterceptor"/>
+	    	</beans:list>
+	    </beans:property>
+	</beans:bean>    
     
+    <beans:bean id="officeHoursInterceptor" class="dymn.interceptor.PropertyReloadInterceptor" />
     <interceptors>
     	<interceptor>
     		<mapping path="/**"/>
@@ -49,4 +57,5 @@
     		<beans:bean class="dymn.interceptor.PropertyReloadInterceptor" />
     	</interceptor>
     </interceptors>
+        
 </beans:beans>
