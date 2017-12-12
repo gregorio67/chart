@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import dymn.chart.service.ApiService;
 import dymn.utils.CacheUtil;
 import dymn.utils.CryptotUtil;
 import dymn.utils.PasswordEncoder;
@@ -38,6 +39,9 @@ public class AuthController {
 	
 	@Resource(name="cacheUtil")
 	private CacheUtil cacheUtil;
+	
+	@Resource(name="apiService")
+	private ApiService apiService;
 
 //	@Resource(name="propertiesUtil")
 //	private ReloadablePropertyPlaceholderConfigurer propertiesUtil;
@@ -113,9 +117,11 @@ public class AuthController {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("clientId", "kkimdoy");
 		resultMap.put("authTime", System.currentTimeMillis());
-		resultMap.put("authcode", RandomUtil.getUUID());
+		resultMap.put("authCode", RandomUtil.getUUID());
 		
 		cacheUtil.putData("kkimdoy", resultMap);
+		apiService.updateApiUser(resultMap);
+		
 		return resultMap;
 		
 	}
@@ -123,7 +129,15 @@ public class AuthController {
 	@RequestMapping(value="checkAuthCode.do")
 	public @ResponseBody Map<String, Object> checkAuthCode() throws Exception {
 		long refreshTime = 60000;
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("clientId", "kkimdoy");
+		
+		Map<String, Object> apiResult = apiService.selectClientId(param);
+		LOGGER.debug("api :: {}", apiResult);
+		
 		Map<String, Object> resultMap = cacheUtil.getData("kkimdoy", Map.class);
+		
 		long authTime = Long.parseLong(String.valueOf(resultMap.get("authTime")));
 		if ((authTime + refreshTime) < System.currentTimeMillis()) {
 			resultMap.put("code", "Your auth code was expired");

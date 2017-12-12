@@ -32,6 +32,8 @@
 
 	<beans:import resource="classpath:spring/context-restclient.xml" />	
 	
+	<beans:import resource="classpath:spring/context-transaction.xml"/>
+	
 	<!-- beans:import resource="classpath:spring/context-task.xml" /-->	
 	<!-- beans:import resource="classpath:spring/context-restclient.xml" /-->
 </beans:beans>
