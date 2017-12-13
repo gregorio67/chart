@@ -46,8 +46,25 @@
 	             // }
 	            }
 	        });
-	        //chart.load(jsonData);    	
+	        //chart.load(jsonData);
+	        setTimeout(function () {
+	            c3.generate({
+	                data: {
+		            	url : "http://localhost:8080/showData.do",
+		            	mimeType : "json"
+	                }
+	            });
+	        }, 1000);
+	        
+	        setTimeout(function () {
+	            chart.load({
+	                url: 'http://localhost:8080/showData.do',
+	                mimeType : "json"
+	            });
+	        }, 500);
     }
+	    
+
     </script>
   </head>
   <body onload="draw_chart()">

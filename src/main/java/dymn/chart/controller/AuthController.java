@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import dymn.chart.service.ApiService;
 import dymn.utils.CacheUtil;
 import dymn.utils.CryptotUtil;
+import dymn.utils.MailUtil;
 import dymn.utils.PasswordEncoder;
 import dymn.utils.RandomUtil;
 import dymn.utils.ReloadPropertyUtil;
@@ -42,6 +43,9 @@ public class AuthController {
 	
 	@Resource(name="apiService")
 	private ApiService apiService;
+	
+	@Resource(name="mailUtil")
+	private MailUtil mailUtil;
 
 //	@Resource(name="propertiesUtil")
 //	private ReloadablePropertyPlaceholderConfigurer propertiesUtil;
@@ -144,6 +148,15 @@ public class AuthController {
 		}
 		return resultMap;
 		
+	}
+	
+	@RequestMapping(value="sendmail.do")
+	public @ResponseBody Map<String, Object> sendMail() throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		mailUtil.sendMail("kkimdoy@gamil.com", "TEST", "Test message");
+		resultMap.put("status", "OK");
+		return resultMap;
 	}
 	
 }
