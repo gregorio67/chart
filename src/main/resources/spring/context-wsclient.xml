@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+	<beans:bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
+
+    <beans:bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller" />
+
+	<beans:bean id="messageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+		<beans:property name="httpClient" ref="httpClient" />
+	</beans:bean>
+    <beans:bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+        <beans:constructor-arg ref="messageFactory" />
+        <beans:property name="marshaller" ref="marshaller" />
+        <beans:property name="unmarshaller" ref="marshaller" />
+        <beans:property name="messageSender" ref="messageSender" />
+        <beans:property name="defaultUri" value="http://localhost:8080/sample/hello" />
+    </beans:bean>
+
+</beans:beans>
