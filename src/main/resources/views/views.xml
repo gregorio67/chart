@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
    
    <beans:bean id="XlsView" class="dymn.utils.ExcelXlsView">
-		<beans:property name="nullDefault" value=" " />
+		<beans:property name="nullDefault" value="-" />
 		<beans:property name="colWidth" value="20" />
    </beans:bean>
 </beans:beans>

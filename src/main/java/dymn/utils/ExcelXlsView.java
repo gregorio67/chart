@@ -42,8 +42,18 @@ public class ExcelXlsView extends  AbstractXlsView {
 		HSSFSheet sheet = (HSSFSheet) workbook.createSheet(header.get("sheetName") != null ? String.valueOf(header.get("sheetName")) : "Sheet1");
 		sheet.setDefaultColumnWidth(colWidth);
 
-        Font font = workbook.createFont();
-        font.setFontName("Arial");
+        Font headerFont = workbook.createFont();
+        headerFont.setFontName("Arial");
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
+        headerFont.setBold(true);
+        headerFont.setItalic(false);
+
+        Font dataFont = workbook.createFont();
+        dataFont.setFontName("Arial");
+        dataFont.setColor(IndexedColors.BLACK.getIndex());
+        dataFont.setBold(false);
+        headerFont.setItalic(false);
+
 
 		CellStyle headerStyle = workbook.createCellStyle();
 		headerStyle.setBorderTop(BorderStyle.THIN);
@@ -51,14 +61,14 @@ public class ExcelXlsView extends  AbstractXlsView {
 		headerStyle.setBorderLeft(BorderStyle.THIN);
 		headerStyle.setBorderRight(BorderStyle.THIN);
 		headerStyle.setFillBackgroundColor(IndexedColors.GREY_50_PERCENT.index);
-		headerStyle.setFont(font);
+		headerStyle.setFont(headerFont);
 		
 		CellStyle dataStyle = workbook.createCellStyle();
 		dataStyle.setBorderTop(BorderStyle.THIN);
 		dataStyle.setBorderBottom(BorderStyle.THIN);
 		dataStyle.setBorderLeft(BorderStyle.THIN);
 		dataStyle.setBorderRight(BorderStyle.THIN);
-		dataStyle.setFont(font);
+		dataStyle.setFont(dataFont);
 		
 //        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 //        font.setBoldweight(HSSFFont.COLOR_NORMAL..BOLDWEIGHT_BOLD);
@@ -83,12 +93,12 @@ public class ExcelXlsView extends  AbstractXlsView {
         	col = 0;
         	while(itr.hasNext()) {
         		String key = itr.next();
-        		aRow.createCell(col).setCellValue(map.get(key) != null ? String.valueOf(map.get(key)): nullDefault);
-        		aRow.getCell(col).setCellStyle(dataStyle);
+        		aRow.createCell(col).setCellStyle(dataStyle);
+        		aRow.getCell(col).setCellValue(map.get(key) != null ? String.valueOf(map.get(key)): nullDefault);
         		col++;
         	}
-        	
         }
+        
         
         String fileName = header.get("fileName") != null ? String.valueOf(header.get("fileName")):"download.xls";
         LOGGER.info("{} file successfully downloaded", fileName);
