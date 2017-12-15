@@ -11,4 +11,8 @@
 		<setting name="defaultFetchSize" value="100" />
 		<setting name="jdbcTypeForNull" value="NULL" />
 	</settings>
+	<typeAliases>
+		<typeAlias alias="hashMap" type="java.util.HashMap" />
+		<typeAlias alias="linkedHashMap" type="java.util.LinkedHashMap" />
+	</typeAliases>
 </configuration>

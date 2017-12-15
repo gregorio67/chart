@@ -31,6 +31,19 @@
 	<beans:bean id="handlerMapping2" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"> 
 	    <beans:property name="order" value="2"/> 
 	</beans:bean-->
+
+   <!-- beans:bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+        <beans:property name="order" value="0"/>
+        <beans:property name="basename" value="classpath:/views/views.xml"/>
+    </beans:bean-->	
+    
+	<beans:bean class="org.springframework.web.servlet.view.XmlViewResolver">
+		<beans:property name="location">
+			<beans:value>classpath:/views/views.xml</beans:value>
+		</beans:property>
+		<beans:property name="order" value="0" />
+	</beans:bean>
+
 	
     <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!-- 뷰(jsp)의 접두어, 접미어 설정 : 파일명만 작성할 수 있게 세팅 -->
@@ -38,6 +51,7 @@
         <beans:property name="prefix" value="/WEB-INF/views/" />
         <!-- 접미어(확장자) -->
         <beans:property name="suffix" value=".jsp" />
+        <beans:property name="order" value="2" />
     </beans:bean> 
     
     <!-- beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" /-->
@@ -63,5 +77,4 @@
 		<beans:property name="maxUploadSize" value="100000" />
 
 	</beans:bean>
-        
 </beans:beans>
