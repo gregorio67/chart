@@ -21,5 +21,77 @@
         <beans:property name="messageSender" ref="messageSender" />
         <beans:property name="defaultUri" value="http://localhost:8080/sample/hello" />
     </beans:bean>
+	
+    <bean id="soapMessageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory">
+        <property name="soapVersion">
+            <util:constant static-field="org.springframework.ws.soap.SoapVersion.SOAP_11"/>
+        </property>
+    </bean>
+
+	<bean id="soapMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="packagesToScan" value="sehati.inf.vo"/>
+		<property name="marshallerProperties">
+			<map>
+				<entry>
+					<key>
+						<util:constant static-field="javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT" />
+					</key>
+					<value type="java.lang.Boolean">false</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="wsHttpClient" class="sehati.framework.http.client.CostomClosableHttpClient">
+		<property name="ignoreCertValidate" value="true"/>
+		<property name="sslProtocols" value="TLSv1.1, TLSv1.2" />
+		<property name="connectTimeout" value="3000" />
+		<property name="readTimeout" value="3000" />
+		<property name="maxPool" value="100" />
+		<property name="keyStoreLocation" value="D:/ssl/keystore" />
+		<property name="trustStoreLocation" value="D:/ssl/truststore" />
+		<property name="password" value="kyobo11!" />
+	</bean>
+
+	<bean id="messageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+		<property name="httpClient" ref="wsHttpClient" />
+	</bean>
+
+	<!-- WebServiceTemplate -->
+	<bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<constructor-arg ref="soapMessageFactory"/>
+		<property name="marshaller" ref="soapMarshaller"/>
+		<property name="unmarshaller" ref="soapMarshaller"/>
+		<property name="messageSender" ref="messageSender" />
+		<property name="interceptors">
+			<list>
+				<ref bean="securityHeader" />
+				<!-- ref bean="wsInterceptor" /-->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="securityHeader"  class="org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor">
+	 	<!-- property name="validationActions" value="NoSecurity" /-->
+	    <property name="securementActions" value="UsernameToken" />
+	    <property name="securementActor" value="ngi" />
+	    <property name="securementUsername" value="portalvvr" />
+	    <property name="securementPassword" value="ngi" />
+	    <property name="securementPasswordType" value="PasswordText" />
+	    <!-- property name="securementUsernameTokenElements" value="Nonce Created" /-->
+	    <property name="securementMustUnderstand" value="true" />
+	    <!-- property name="securementSignatureUser" value="ngi" /-->
+	</bean>
+	<bean id="wsInterceptor" class="sehati.inf.cmn.util.WSInterceptor" />
+
+	<!-- Web Service List -->
+	<util:map id="GlobalWeather" key-type="java.lang.String" map-class="java.util.HashMap">
+		<entry key="host" value="http://www.webservicex.net" />
+		<entry key="prefix" value="soap12" />
+		<entry key="soapAction" value="http://www.webserviceX.NET/GetWeather" />
+
+		<entry key="getWeather" value="/globalweather.asmx" />
+		<entry key="getCitiesByCountry" value="/globalweather.asmx" />
+	</util:map>	
 
 </beans:beans>
