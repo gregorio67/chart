@@ -9,6 +9,23 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
+	
+	<bean id="restHttpClient" class="sehati.framework.http.client.CostomClosableHttpClient">
+		<property name="ignoreCertValidate" value="true"/>
+		<property name="sslProtocols" value="TLSv1.1, TLSv1.2" />
+		<property name="connectTimeout" value="3000" />
+		<property name="readTimeout" value="3000" />
+		<property name="maxPool" value="100" />
+		<property name="keyStoreLocation" value="D:/ssl/keystore" />
+		<property name="trustStoreLocation" value="D:/ssl/truststore" />
+		<property name="password" value="kyobo11!" />
+    </bean>
+
+    <bean id="restClient" class="sehati.inf.service.RestClient" init-method="init">
+		<property name="connectTimeout" value="3000" />
+		<property name="readTimeout" value="3000" />
+    </bean>
+	
     <beans:bean id="restTemplate" class="dymn.utils.RestTemplateBean" init-method="init">
 		<beans:property name="ignoreCertValidate" value="false"/>
 		<beans:property name="sslProtocols" value="TLSv1.1, TLSv1.2" />
