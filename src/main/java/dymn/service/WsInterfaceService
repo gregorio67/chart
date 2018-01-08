@@ -1,0 +1,19 @@
+
+package sehati.inf.service;
+
+
+public interface WsInterfaceService {
+
+	/**
+	 * Request API to WebService-SoAP I/F Server
+	 *
+	 * @param intfGroupId Interface Group Id (context-interface-ws.xml 'util:map' bean의 id)
+	 * @param interfaceId Interface Id (context-interface-ws.xml 'intfGroupId' bean에 해당하는 map의 key)
+	 * @param requestVo Request Body Object
+	 * @param responseType Response Body Class Type
+	 * @param <V> Request Body Class Type
+	 * @param <T> Response Body Class Type
+	 * @return Response Body Data
+	 */
+	public <V, T> T requestWsIf( String intfGroupId, String interfaceId, final V requestVo, Class<T> responseType, final String command );
+}
