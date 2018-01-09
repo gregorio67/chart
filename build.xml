@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<project name='cm' default='default' basedir='.'>
+
+    <!--
+ 		   이 설정들은 특수한 경우가 아니면 수정하지 말 것.
+    -->
+    <property name='ci.home'           value='/engn001/ciserv' />
+	<property name='ci.job.home'       value='${ci.home}/jenkins/jobs' />
+	<property name='ci.app.home'       value='${ci.job.home}/CM_DEV/workspace' />
+
+    <!--
+    	이 설정들은 프로젝트의 사정에 맞게 값을 수정할 것.
+    -->
+    <property name='app.name'             value='cm' />
+    <property name='java.encoding'        value='UTF-8' />
+	<property name='src.dir'              value='${ci.app.home}/src/main/java' />
+    <property name='src.dir.web'          value='${ci.app.home}/src/main/webapp'/>
+    <property name='src.dir.resources'     value='${ci.app.home}/src/main/resources'/>
+    <property name='tmp.dir'              value='${ci.app.home}/target/${app.name}'/>
+    <property name='tmp.dir.classes'	  value='${tmp.dir}/WEB-INF/classes'/>
+<!--
+	<property name='target.dir'           value='/sorc001/war/cm_8080/BizActorServerForTestArgoEE1' />
+-->
+    <property name='target.dir'           value='/sorc001/war/cm_8080/bizactor' />
+    <property name='target.dir.web'       value='/sorc001/htdocs/${app.name}'/>
+    <property name='lib.dir'			  value='${ci.app.home}/target/${app.name}/WEB-INF/lib'/>
+    <property name='dev.was.ip'           value='10.0.20.11'/>
+    <property name='dev.was.user'		  value='erpapp'/>
+    <property name='dev.was.pass'		  value='!roqkf00'/>
+    <property name='dev.argo.dir'		  value='/engn001/argo/1.1/servers/cm_8080'/>
+
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset dir='/engn001/argo/1.1/servers/cm_8080/lib' includes="**/*.jar"/>
+		<fileset dir='/engn001/BizActorHome/${app.name}/Server' includes="**/*.jar"/>
+	</path>
+
+    <target name='default' depends='init, prepare, compile, war, deploy'/>
+
+    <!--
+    	빌드 결과물(바이너리,보고서등) 을 축적할 디렉터리를 삭제/재생성하여 초기화 함.
+    -->
+    <target name='init'>
+    	<delete dir='${tmp.dir.classes}'/>
+
+    	<mkdir  dir='${tmp.dir}' />
+    	<mkdir  dir='${tmp.dir.classes}' />
+    </target>
+
+    <target name='prepare' depends='init'>
+    	<sync todir="${tmp.dir}">
+			<fileset dir="${src.dir.web}"/>
+		</sync>
+    	<sync todir="${tmp.dir.classes}">
+			<fileset dir="${src.dir.resources}"/>
+		</sync>
+
+		<copy file="${tmp.dir.classes}/log4j_dev.xml" tofile="${tmp.dir.classes}/log4j.xml"  overwrite="true" />
+		<copy file="${tmp.dir.classes}/config/ncd.properties_dev" tofile="${tmp.dir.classes}/config/ncd.properties"  overwrite="true" />
+		<copy file="${tmp.dir.classes}/spring/mvc-context-fileupload.xml_dev" tofile="${tmp.dir.classes}/spring/mvc-context-fileupload.xml"  overwrite="true" />
+    	<copy file="${tmp.dir.classes}/spring/context-fileupload.xml_dev" tofile="${tmp.dir.classes}/spring/context-fileupload.xml"  overwrite="true" />
+    	<copy file="${tmp.dir}/WEB-INF/web.xml_dev" tofile="${tmp.dir}/WEB-INF/web.xml"  overwrite="true" />
+		<delete file="${tmp.dir}/WEB-INF/lib/bizactor.dataset.jar" />
+    	<delete file="${tmp.dir}/WEB-INF/lib/bizactor.exception.jar" />
+		<delete file="${tmp.dir}/WEB-INF/lib/httpclient-4.5.2.jar" />
+		<delete file="${tmp.dir}/WEB-INF/lib/httpcore-4.4.4.jar" />
+		<delete file="${tmp.dir}/WEB-INF/lib/server.agent.developer.jar" />
+
+    </target>
+
+    <target name="compile" depends="prepare">
+	    <javac srcdir="${src.dir}" destdir="${tmp.dir.classes}" deprecation="off" debug="on" includeantruntime="true">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+
+    <target name="war" depends="compile">
+		<jar jarfile="${app.name}.war">
+			<fileset dir="${tmp.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+
+    <!--
+	    컴파일이 완료된 실행모듈을 타켓 디렉터리와 동기화하여 통합시험 환경에 변경 모듈 반영.
+    -->
+    <target name='deploy' depends='war'>
+    	<echo message="Stop WAS..." />
+    	<sshexec host="${dev.was.ip}" username="${dev.was.user}"
+					password="${dev.was.pass}" trust="yes" failonerror="no"
+					command="${dev.argo.dir}/stop.sh" />
+
+    	<sleep seconds="5" />
+
+		<echo message="War file copy"/>
+		<sshexec host="${dev.was.ip}"
+                 username="${dev.was.user}"
+                 password="${dev.was.pass}"
+                 trust="yes"
+                 failonerror="no"
+                 command="chmod 775 ${target.dir}; rm -rf ${target.dir}/${app.name}"/>
+
+		<scp file="${app.name}.war"
+			     todir="${dev.was.user}:${dev.was.pass}@${dev.was.ip}:${target.dir}"
+				 sftp="true"
+				 trust="true"
+				 failonerror="true">
+		</scp>
+
+    	<sshexec host="${dev.was.ip}"
+    		                 username="${dev.was.user}"
+    		                 password="${dev.was.pass}"
+    		                 trust="yes"
+    		                 failonerror="no"
+    		                 command="chmod 775 ${target.dir}"/>
+
+		<echo message="3. Start WAS ..." />
+			<sshexec host="${dev.was.ip}"
+                 username="${dev.was.user}"
+                 password="${dev.was.pass}"
+                 trust="yes"
+        	     failonerror="no"
+                 command="${dev.argo.dir}/start.sh > /dev/null" />
+
+		<sleep seconds="5" />
+		<echo message="작업완료" />
+   	</target>
+
+</project>
