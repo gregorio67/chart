@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ibm" default="default" basedir=".">
+
+    <!--
+ 		   이 설정들은 특수한 경우가 아니면 수정하지 말 것.
+    -->
+    <property name="ci.home"           value="/engn001/ciserv" />
+	<property name="ci.job.home"       value="${ci.home}/hudson/jobs" />
+	<property name="ci.app.home"       value="${ci.job.home}/SEHATI-IBM-DEV/workspace" />
+
+    <!--
+    	이 설정들은 프로젝트의 사정에 맞게 값을 수정할 것.
+    -->
+    <property name="app.name" value="ibm" />
+    <property name="java.encoding" value="UTF-8" />
+	<property name="src.dir"  value="${ci.app.home}/src/main/java" />
+    <property name="src.dir.web"  value="${ci.app.home}/src/main/webapp"/>
+    <property name="src.dir.resources"  value="${ci.app.home}/src/main/resources"/>
+    <property name="tmp.dir" value="${ci.app.home}/target/${app.name}"/>
+    <property name="tmp.dir.classes" value="${tmp.dir}/WEB-INF/classes"/>
+<!--
+	<property name="target.dir"           value="/sorc001/war/cm_8080/BizActorServerForTestArgoEE1" />
+-->
+    <property name="target.dir" value="/sorc001/war/cm_8080/bizactor" />
+    <property name="target.dir.web" value="/sorc001/htdocs/${app.name}"/>
+    <property name="lib.dir" value="${ci.app.home}/target/${app.name}/WEB-INF/lib"/>
+    <property name="web.ip" value="10.255.114.24"/>
+    <property name="was.ip" value="10.255.116.163"/>
+	<property name="was.port" value="22" /> <!-- 배포 WAS 서버 Port -->
+	<property name="was.userid" value="ec2-user" /> <!-- 배포 WAS 서버 userid -->
+	<property name="keyfile.dir" value="/home/ci/.ssh/hira-dev.pem" />
+	<property name="was.home" value="/engn001/apache-tomcat-7.0.76" />
+	<property name="ci.war.dir" value="/engn001/ciserv/hudson/jobs/SEHATI-IBM-DEV/workspace" />
+	<property name="war.filename" value="ibm.war" />
+	<property name="was.tmp.src.dir" value="/tmp/src" /> 
+	<property name="was.src.dir" value="/sorc001/ibm" />
+	
+	
+	
+
+	<!-- =============================================================== -->
+	<!-- Build source to war  -->
+	<!-- =============================================================== -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset dir="/engn001/ciserv/lib/tomcat7" includes="**/*.jar"/>
+		<!--fileset dir="/engn001/BizActorHome/${app.name}/Server" includes="**/*.jar"/-->
+	</path>
+
+    <target name="default" depends="init, prepare, compile, war, stop-tomcat, copy-war, unzip-waspackage, start-tomcat"/>
+	
+	<!--target name="all" depends="start-tomcat"/-->
+    <!--
+    	빌드 결과물(바이너리,보고서등) 을 축적할 디렉터리를 삭제/재생성하여 초기화 함.
+    -->
+    <target name="init">
+    	<delete dir="${tmp.dir.classes}"/>
+    	<mkdir  dir="${tmp.dir}" />
+    	<mkdir  dir="${tmp.dir.classes}" />
+    </target>
+
+    <target name="prepare" depends="init">
+    	<sync todir="${tmp.dir}">
+			<fileset dir="${src.dir.web}"/>
+		</sync>
+    	<sync todir="${tmp.dir.classes}">
+			<fileset dir="${src.dir.resources}"/>
+		</sync>
+
+		<copy file="${tmp.dir.classes}/svrcfg/log/log4j2_dev.xml" tofile="${tmp.dir.classes}/log4j2.xml"  overwrite="true" />
+		<copy file="${tmp.dir.classes}/svrcfg/upload_dev.properties" tofile="${tmp.dir.classes}/config/upload.properties"  overwrite="true" />
+    	<copy file="${tmp.dir.classes}/svrcfg/web_dev.xml" tofile="${tmp.dir}/WEB-INF/web.xml"  overwrite="true" />
+       	<copy file="${tmp.dir.classes}/svrcfg/bizactor/server.agent.jar" tofile="${tmp.dir}/WEB-INF/lib/server.agent.jar"  overwrite="true" />
+		<delete file="${tmp.dir}/WEB-INF/lib/server.agent.developer.jar" />
+
+    </target>
+
+    <target name="compile" depends="prepare">
+	    <javac srcdir="${src.dir}" destdir="${tmp.dir.classes}" deprecation="off" debug="on" includeantruntime="true">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+
+    <target name="war" depends="compile">
+		<jar jarfile="${app.name}.war">
+			<fileset dir="${tmp.dir}">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- =================================================================== -->
+	<!-- 3. Deploy Was : -->
+	<!-- =================================================================== -->
+	<target name="stop-tomcat" depends="war">
+			<sshexec  host="${was.ip}"
+				username="${was.userid}"
+				port="${was.port}"
+				keyfile="${keyfile.dir}"
+				command="sh ${was.home}/bin/shutdown.sh;
+						cd ${was.src.dir};
+						sudo rm -rf *"
+						trust="true"/>
+		<sleep seconds="5"/>	
+	</target>
+	
+
+	<target name="copy-war" depends="stop-tomcat">
+		<!--scp file="${ci.war.dir}/${war.filename}"
+			todir="${was.userid}@${was.ip}:${was.tmp.src.dir}"
+			port="${was.port}"
+			keyfile="${keyfile.dir}"
+			trust="true"
+		/-->
+	    <!-- Remote file copy was server-->
+    <!-- aws public key permission deny or Host key verification failed. Use -r option -->
+
+    <echo message="Remote copy war file to was server "/>
+		<exec executable="scp" dir="." failonerror="true">
+		    <arg value="-r"/>
+		    <arg value="-i"/>
+	    	<arg value="${keyfile.dir}" />
+	    	<arg value="${ci.war.dir}/${war.filename}" />
+		    <arg value="${was.userid}@${was.ip}:${was.tmp.src.dir}"/>
+	    </exec>
+
+	    <!-- Remote file copy web server -->
+		<!--echo message="Remote copy war file to web server "/>
+		<exec executable="scp" dir="." failonerror="true">
+		    <arg value="-i"/>
+	    	<arg value="${keyfile.dir}" />
+	    	<arg value="${ci.war.dir}/${war.filename}" />
+		    <arg value="${web.userid}@${web.ip}:${was.tmp.src.dir}"/>
+	    </exec-->		
+		
+	</target>
+	
+	<!-- =================================================================== -->
+	<!-- 3. UNPACKAGING SOURCE : -->
+	<!-- =================================================================== -->
+	<target name="unzip-waspackage" depends="copy-war">
+			<sshexec  host="${was.ip}"
+				username="${was.userid}"
+				keyfile="${keyfile.dir}"
+				port="${was.port}"
+				command="sudo cp ${was.tmp.src.dir}/${war.filename} ${was.src.dir};
+						 cd ${was.src.dir};
+						 sudo unzip ${was.src.dir}/${war.filename};
+						 sudo rm -rf ${war.filename}"
+				trust="true"/>
+	</target>
+	
+
+	<echo message="Tomcat Start" />
+	<!-- =================================================================== -->
+	<!-- 5. Start Tomcat                                                     -->
+	<!-- =================================================================== -->
+	<target name="start-tomcat" depends="unzip-waspackage">
+			<sshexec  host="${was.ip}"
+				username="${was.userid}"
+				keyfile="${keyfile.dir}"
+				port="${was.port}"
+				command="cd ${was.src.dir}
+						 sudo chown -R tomcat:tomcat *;
+						 sudo sh ${was.home}/bin/startup.sh"
+				trust="true"/>
+	</target>	
+	
+	
+</project>
