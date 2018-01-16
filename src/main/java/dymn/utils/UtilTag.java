@@ -1,0 +1,16 @@
+import java.text.DecimalFormat;
+
+public class ErpUtilTag{
+
+	public static String bytesToSize(long size){
+		if(size <= 0) return "0";
+		final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+		int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+		return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+	}
+	
+	public static void main(String[] args){
+		System.out.println(ErpUtilTag.bytesToSize(4340343));
+		
+	}
+}
