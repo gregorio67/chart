@@ -16,7 +16,7 @@
     <property name="java.encoding" value="UTF-8" />
 	<property name="src.dir"  value="${ci.app.home}/src/main/java" />
     <property name="src.dir.web"  value="${ci.app.home}/src/main/webapp"/>
-    <property name="src.dir.resources"  value="${ci.app.home}/src/main/resources"/>
+    <property name="src.resources.dir"  value="${ci.app.home}/src/main/resources"/>
     <property name="tmp.dir" value="${ci.app.home}/target/${app.name}"/>
     <property name="tmp.dir.classes" value="${tmp.dir}/WEB-INF/classes"/>
 <!--
@@ -24,8 +24,10 @@
 -->
     <property name="target.dir" value="/sorc001/war/cm_8080/bizactor" />
     <property name="target.dir.web" value="/sorc001/htdocs/${app.name}"/>
-    <property name="lib.dir" value="${ci.app.home}/target/${app.name}/WEB-INF/lib"/>
+    <property name="lib.dir" value="${tmp.dir}/WEB-INF/lib"/>
     <property name="web.ip" value="10.255.114.24"/>
+	<property name="web.port" value="22" /> <!-- 배포 WAS 서버 Port -->
+	<property name="web.userid" value="ec2-user" /> <!-- 배포 WAS 서버 userid -->
     <property name="was.ip" value="10.255.116.163"/>
 	<property name="was.port" value="22" /> <!-- 배포 WAS 서버 Port -->
 	<property name="was.userid" value="ec2-user" /> <!-- 배포 WAS 서버 userid -->
@@ -34,7 +36,9 @@
 	<property name="ci.war.dir" value="/engn001/ciserv/hudson/jobs/SEHATI-IBM-DEV/workspace" />
 	<property name="war.filename" value="ibm.war" />
 	<property name="was.tmp.src.dir" value="/tmp/src" /> 
-	<property name="was.src.dir" value="/sorc001/ibm" />
+	<property name="web.tmp.src.dir" value="/tmp/src" /> 
+	<property name="was.src.dir" value="/sorc001/sehati/ibm" />
+	<property name="web.src.dir" value="/sorc001/sehati/ibm" />
 	
 	
 	
@@ -48,7 +52,7 @@
 		<!--fileset dir="/engn001/BizActorHome/${app.name}/Server" includes="**/*.jar"/-->
 	</path>
 
-    <target name="default" depends="init, prepare, compile, war, stop-tomcat, copy-war, unzip-waspackage, start-tomcat"/>
+    <target name="default" depends="init, prepare, compile, war, stop-tomcat, copy-war, unzip-waspackage, start-tomcat, copy-war-web, unzip-webpackage"/>
 	
 	<!--target name="all" depends="start-tomcat"/-->
     <!--
@@ -65,14 +69,8 @@
 			<fileset dir="${src.dir.web}"/>
 		</sync>
     	<sync todir="${tmp.dir.classes}">
-			<fileset dir="${src.dir.resources}"/>
+			<fileset dir="${src.resources.dir}"/>
 		</sync>
-
-		<copy file="${tmp.dir.classes}/svrcfg/log/log4j2_dev.xml" tofile="${tmp.dir.classes}/log4j2.xml"  overwrite="true" />
-		<copy file="${tmp.dir.classes}/svrcfg/upload_dev.properties" tofile="${tmp.dir.classes}/config/upload.properties"  overwrite="true" />
-    	<copy file="${tmp.dir.classes}/svrcfg/web_dev.xml" tofile="${tmp.dir}/WEB-INF/web.xml"  overwrite="true" />
-       	<copy file="${tmp.dir.classes}/svrcfg/bizactor/server.agent.jar" tofile="${tmp.dir}/WEB-INF/lib/server.agent.jar"  overwrite="true" />
-		<delete file="${tmp.dir}/WEB-INF/lib/server.agent.developer.jar" />
 
     </target>
 
@@ -90,10 +88,31 @@
 		</jar>
 	</target>
 
+		
 	<!-- =================================================================== -->
 	<!-- 3. Deploy Was : -->
 	<!-- =================================================================== -->
-	<target name="stop-tomcat" depends="war">
+	<target name="copy-war" depends="war">
+		<!--scp file="${ci.war.dir}/${war.filename}"
+			todir="${was.userid}@${was.ip}:${was.tmp.src.dir}"
+			port="${was.port}"
+			keyfile="${keyfile.dir}"
+			trust="true"
+		/-->
+	    <!-- Remote file copy was server-->
+		<echo message="Remote copy war file to was server "/>
+		<exec executable="scp" dir="." failonerror="true">
+		    <arg value="-r"/>
+		    <arg value="-i"/>
+	    	<arg value="${keyfile.dir}" />
+	    	<arg value="${ci.war.dir}/${war.filename}" />
+		    <arg value="${was.userid}@${was.ip}:${was.tmp.src.dir}"/>
+	    </exec>		
+	</target>
+	
+	
+	
+	<target name="stop-tomcat" depends="copy-war">
 			<sshexec  host="${was.ip}"
 				username="${was.userid}"
 				port="${was.port}"
@@ -105,51 +124,42 @@
 		<sleep seconds="5"/>	
 	</target>
 	
-
-	<target name="copy-war" depends="stop-tomcat">
-		<!--scp file="${ci.war.dir}/${war.filename}"
-			todir="${was.userid}@${was.ip}:${was.tmp.src.dir}"
-			port="${was.port}"
-			keyfile="${keyfile.dir}"
-			trust="true"
-		/-->
-	    <!-- Remote file copy was server-->
-    <!-- aws public key permission deny or Host key verification failed. Use -r option -->
-
-    <echo message="Remote copy war file to was server "/>
-		<exec executable="scp" dir="." failonerror="true">
-		    <arg value="-r"/>
-		    <arg value="-i"/>
-	    	<arg value="${keyfile.dir}" />
-	    	<arg value="${ci.war.dir}/${war.filename}" />
-		    <arg value="${was.userid}@${was.ip}:${was.tmp.src.dir}"/>
-	    </exec>
-
-	    <!-- Remote file copy web server -->
-		<!--echo message="Remote copy war file to web server "/>
-		<exec executable="scp" dir="." failonerror="true">
-		    <arg value="-i"/>
-	    	<arg value="${keyfile.dir}" />
-	    	<arg value="${ci.war.dir}/${war.filename}" />
-		    <arg value="${web.userid}@${web.ip}:${was.tmp.src.dir}"/>
-	    </exec-->		
-		
-	</target>
 	
 	<!-- =================================================================== -->
 	<!-- 3. UNPACKAGING SOURCE : -->
 	<!-- =================================================================== -->
-	<target name="unzip-waspackage" depends="copy-war">
-			<sshexec  host="${was.ip}"
+	<target name="unzip-waspackage" depends="stop-tomcat">
+		<echo message="WAS server source unzip" />
+		<sshexec  host="${was.ip}"
 				username="${was.userid}"
 				keyfile="${keyfile.dir}"
 				port="${was.port}"
 				command="sudo cp ${was.tmp.src.dir}/${war.filename} ${was.src.dir};
 						 cd ${was.src.dir};
-						 sudo unzip ${was.src.dir}/${war.filename};
-						 sudo rm -rf ${war.filename}"
-				trust="true"/>
+						 sudo unzip -o ${was.src.dir}/${war.filename};
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/bizactor.controlling.jar ${was.src.dir}/WEB-INF/lib/bizactor.controlling.jar;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/bizactor.modeling.jar ${was.src.dir}/WEB-INF/lib/bizactor.modeling.jar;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/bizactor.running.jar ${was.src.dir}/WEB-INF/lib/bizactor.running.jar;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/bizactor.server.jar ${was.src.dir}/WEB-INF/lib/bizactor.server.jar;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/server.agent.jar ${was.src.dir}/WEB-INF/lib/server.agent.jar;					 	
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/log4j2_dev.xml ${was.src.dir}/WEB-INF/classes/log4j2.xml;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/upload_dev.properties ${was.src.dir}/WEB-INF/classes/config/upload.properties;
+						 sudo cp ${was.src.dir}/WEB-INF/classes/svrcfg/dev/web_dev.xml ${was.src.dir}/WEB-INF/web.xml;
+						 sudo rm -rf ${was.src.dir}/WEB-INF/lib/server.agent.developer.jar;
+						 sudo rm -rf ${was.src.dir}/demo;
+						 sudo rm -rf ${was.src.dir}/help;
+						 sudo rm -rf ${was.src.dir}/report;
+						 sudo rm -rf ${was.src.dir}/resource;
+						 sudo rm -rf ${was.src.dir}/rui;
+						 sudo rm -rf ${was.src.dir}/${app.name}.war;
+						 sudo chown -R tomcat:tomcat /engn001/BizActorHome/Repository/BizActorModel;
+						 sudo chown -R tomcat:tomcat /logs001/${app.name};	
+						 sudo chown -R tomcat:tomcat *"
+						 
+				trust="true"/>		
 	</target>
+	
+	
 	
 
 	<echo message="Tomcat Start" />
@@ -167,5 +177,46 @@
 				trust="true"/>
 	</target>	
 	
+	<!-- ============================================================= -->
+	<!-- Deploy web package                                            -->	
+	<!-- ============================================================= -->
+	<target name="copy-war-web" depends="start-tomcat">
+		<!--scp file="${ci.war.dir}/${war.filename}"
+			todir="${was.userid}@${was.ip}:${was.tmp.src.dir}"
+			port="${was.port}"
+			keyfile="${keyfile.dir}"
+			trust="true"
+		/-->
+	    <!-- Remote file copy was server-->
+		<echo message="Remote copy war file to was server "/>
+		<exec executable="scp" dir="." failonerror="true">
+		    <arg value="-r"/>
+		    <arg value="-i"/>
+	    	<arg value="${keyfile.dir}" />
+	    	<arg value="${ci.war.dir}/${war.filename}" />
+		    <arg value="${web.userid}@${web.ip}:${web.tmp.src.dir}"/>
+	    </exec>		
+	</target>
+	
+	
+	<target name="unzip-webpackage" depends="copy-war-web">
+		<echo message="WEB server source unzip" />
+		<sshexec  host="${web.ip}"
+				username="${web.userid}"
+				keyfile="${keyfile.dir}"
+				port="${web.port}"
+				command="sudo cp ${web.tmp.src.dir}/${war.filename} ${web.src.dir}/${war.filename};
+						 cd ${web.src.dir};
+						 sudo unzip -o ${was.src.dir}/${war.filename};
+						 sudo rm -rf ${was.src.dir}/ibm.war;
+						 sudo rm -rf ${was.src.dir}/demo;
+						 sudo rm -rf ${was.src.dir}/help;
+						 sudo rm -rf ${was.src.dir}/META-INF;
+						 sudo rm -rf ${was.src.dir}/WEB-INF;
+						 sudo rm -rf ${was.src.dir}/${app.name}.war;
+						 sudo chown -R apache:apache ${web.src.dir}"
+				trust="true"/>		
+	</target>
 	
 </project>
+
