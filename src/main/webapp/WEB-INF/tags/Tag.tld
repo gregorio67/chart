@@ -27,6 +27,13 @@
         <function-signature>java.lang.String bytesToSize(long)</function-signature>
     </function>
 
+ <!--Add web.xml -->
+  <jsp-config>
+    <taglib>
+      <taglib-uri>/erp</taglib-uri>
+      <taglib-location>/WEB-INF/tags/Tag.tld</taglib-location>
+    </taglib>
+  </jsp-config>
 
 
 </taglib>
