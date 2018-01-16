@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+ version="2.1">
+
+   <display-name>TAG</display-name>
+ <tlib-version>1.0</tlib-version>
+ <short-name>session</short-name>
+  <uri>"/prj"</uri>
+
+
+<!--Add Tag if you needed -->
+ <tag>
+    <name>sess</name>
+    <tag-class>spring.common.taglib.SessionTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>attr</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+   <function>
+        <name>bytesToSize</name>
+        <function-class>spring.common.taglib.UtilTag</function-class>
+        <function-signature>java.lang.String bytesToSize(long)</function-signature>
+    </function>
+
+
+
+</taglib>
