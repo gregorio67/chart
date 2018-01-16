@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+	<bean id="textmessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+      <property name="defaultEncoding" value="UTF-8"/>
+      <property name="basenames">
+          <list>
+              <value>classpath:/message/common</value>
+              <value>classpath:/message/message</value>
+              <value>classpath:/message/message-eap</value>
+              <value>classpath:/message/message-validator</value>
+          </list>
+      </property>
+      <property name="cacheSeconds" value="60" />
+    </bean>
+
+	<bean id="messageSource" class="spring.common.message.DatabaseMessageSource">
+	    <property name="dataSource" ref="dataSource" />
+	    <property name="defaultQuery" value="SELECT LANG_CD ,CASE WHEN MSG_GRP = 'API' AND MSG_TYPE = 'MSG' THEN MSG_CD ELSE db_concat3(MSG_GRP, '.', MSG_CD) END AS MSG_CD ,MSG ,MSG_TYPE FROM cm_message where USE_FLAG='Y'" />
+	    <property name="loadType" value="preLoad" />
+	    <property name="tableName" value="CM_MESSAGE" />
+	    <property name="messageColumn" value="MSG" />
+	    <property name="codeColumn" value="MSG_CD" />
+	    <property name="localeColumn" value="LANG_CD" />
+	    <property name="useCodeAsDefaultMessage" value="true" />
+      <!--Add Text Message Source -->
+      <property name="parentMessageSource" ref="textmessageSource"/>
+	</bean>
+
+
+	<bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+		<constructor-arg>
+			<ref bean="messageSource"/>
+		</constructor-arg>
+	</bean>
+
+</beans>
