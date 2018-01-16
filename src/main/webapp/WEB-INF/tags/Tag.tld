@@ -34,6 +34,9 @@
       <taglib-location>/WEB-INF/tags/Tag.tld</taglib-location>
     </taglib>
   </jsp-config>
+  
+  <!-- Java script or Jsp Usage -->
+  <erp:sess attr="TIME_ZONE_CD" />
 
 
 </taglib>
