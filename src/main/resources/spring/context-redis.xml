@@ -12,6 +12,7 @@
 		<property name="port" value="6379"/>
 	</bean-->
 	
+	<!--This is for managing session in redis -->
 	<!-- This should not be removed -->
 	<context:annotation-config/>
 	
