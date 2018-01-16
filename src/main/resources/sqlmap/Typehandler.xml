@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="LobTest">
+
+	<resultMap id="lobtest" type="kics.main.sample.vo.LobTestVo">
+		<result property="id" column="ID" />
+		<result property="blobTest" column="BLOB_TEST" javaType="_byte[]" jdbcType="BLOB"/>
+		<result property="clobTest" column="CLOB_TEST" typeHandler="kics.framework.mybatis.handler.KicsEncClobTypeHandler" javaType="String" jdbcType="CLOB"/>
+		<result property="charTest" column="CHAR_TEST" typeHandler="kics.framework.mybatis.handler.KicsEncPartTypeHandler"/>
+	</resultMap>
+	
+	
+	<select id="selectLobList" parameterType="java.util.Map" resultMap="lobtest">
+		SELECT ID
+		      ,BLOB_TEST
+		      ,CLOB_TEST
+		      ,CHAR_TEST 
+		FROM TB_LOB_TEST
+	</select>
+	
+	<select id="selectLob" parameterType="java.util.Map" resultMap="lobtest">
+		SELECT ID
+		      ,BLOB_TEST
+		      ,CLOB_TEST 
+		FROM TB_LOB_TEST
+		WHERE ID = #{id}
+	</select>
+	
+	<insert id="insertLob" parameterType="kics.main.sample.vo.LobTestVo">		
+		INSERT INTO TB_LOB_TEST
+		(ID, BLOB_TEST, CLOB_TEST, CHAR_TEST)
+		VALUES
+		(#{id}, 
+		#{blobTest}, 
+		#{clobTest, typeHandler=kics.framework.mybatis.handler.KicsEncClobTypeHandler},
+		#{charTest, typeHandler=kics.framework.mybatis.handler.KicsEncPartTypeHandler})
+		
+	</insert>
+	
+</mapper>
